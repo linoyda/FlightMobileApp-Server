@@ -9,15 +9,15 @@ namespace FlightMobileApp.Models
     public class Command
     {
         [JsonPropertyName("rudder")]
-        double Rudder { get; set; }
+        public double Rudder { get; set; }
 
         [JsonPropertyName("aileron")]
-        double Aileron { get; set; }
+        public double Aileron { get; set; }
 
         [JsonPropertyName("elevator")]
-        double Elevator { get; set; }
+        public double Elevator { get; set; }
 
         [JsonPropertyName("throttle")]
-        double Throttle { get; set; }
+        public double Throttle { get; set; }
     }
 }
