@@ -27,6 +27,7 @@ namespace FlightMobileApp
         {
             services.AddControllers();
             services.AddSingleton<ICommandManager, MyCommandManager>();
+            services.AddSingleton<IScreenshotManager, MyScreenshotManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
