@@ -24,7 +24,7 @@ namespace FlightMobileApp.Controllers
         // check type of return***************** need to return status**********
         // POST: /api/command
         [HttpPost]
-        public ActionResult AddCommand([FromBody] Command command)
+        public ActionResult PostCommand([FromBody] Command command)
         {
             // need to check if valid**********
 
