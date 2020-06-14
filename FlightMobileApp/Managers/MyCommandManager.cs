@@ -1,33 +1,38 @@
 ﻿using FlightMobileApp.Models;
 using FlightMobileApp.Utilities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FlightMobileApp.Managers
 {
     public class MyCommandManager : ICommandManager
     {
-        private ITcpClient client = new MyTcpClient();
-        public Task PostCommand(Command command)
+        private readonly IConnectionManager connectionManager;
+        public MyCommandManager(IConnectionManager manager)
+        {
+            connectionManager = manager;
+        }
+        
+        public void PostCommand(Command command)
         {
             try
             {
-                SendCommandContentToSimulator("set /controls/flight/aileron");
+                connectionManager.SendContentToSimulator(
+                    "/controls/flight/throttle", command.Throttle);
+                connectionManager.SendContentToSimulator(
+                    "/controls/flight/elevator", command.Elevator);
+                connectionManager.SendContentToSimulator(
+                    "/controls/flight/rudder", command.Rudder);
+                connectionManager.SendContentToSimulator(
+                    "/controls/flight/aileron", command.Aileron);
+            } catch (Exception)
+            {
+                throw new Exception("error in posting command's content.");
             }
-        }
-
-        public void SendContentToSimulator(string path, double newValue)
-        {
-            client.Write("set /controls/flight/aileron")
-        }
-
-        public
-
-        public bool ConfirmMatchSetAndGet(double sent, double received)
-        {
-            return (sent == received);
         }
     }
 }

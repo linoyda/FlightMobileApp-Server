@@ -8,6 +8,6 @@ namespace FlightMobileApp.Managers
 {
     public interface ICommandManager
     {
-        public Task PostCommand(Command command);
+        public void PostCommand(Command command);
     }
 }
