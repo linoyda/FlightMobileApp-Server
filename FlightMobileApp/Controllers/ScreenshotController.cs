@@ -15,9 +15,9 @@ namespace FlightMobileApp.Controllers
         private readonly IScreenshotManager screenshotManager;
 
         // Constructor
-        public ScreenshotController(IScreenshotManager screenshot)
+        public ScreenshotController(IScreenshotManager manager)
         {
-            this.screenshotManager = screenshot;
+            screenshotManager = manager;
         }
 
         // GET: api/Screenshot

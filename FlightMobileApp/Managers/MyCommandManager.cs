@@ -25,6 +25,7 @@ namespace FlightMobileApp.Managers
             ip = configuration.GetConnectionString("ip");
             portStr = configuration.GetConnectionString("socketPort");
             //Connect(); moved to method ProcessCommands
+            Start();
         }
         public void Connect()
         {
@@ -98,7 +99,7 @@ namespace FlightMobileApp.Managers
                     aileronRes = SendContentToSimulator(
                         "/controls/flight/aileron", asyncCmd.Command.Aileron);
                     //Only if ALL of the results are OK - totalRes is OK.
-                    totalRes = throttleRes & aileronRes & rudderRes & elevatorRes;
+                    totalRes = GetTotalResult(throttleRes, elevatorRes, rudderRes, aileronRes);
                 } catch (Exception exception)
                 {
                     asyncCmd.Completion.SetException(exception);
@@ -107,6 +108,40 @@ namespace FlightMobileApp.Managers
                     asyncCmd.Completion.SetResult(totalRes);
                 }  
             }
+        }
+        public Result GetTotalResult(
+            Result throttleRes, Result elevatorRes, Result rudderRes, Result aileronRes)
+        {
+            if (throttleRes == Result.Ok && elevatorRes == Result.Ok &&
+                aileronRes == Result.Ok && rudderRes == Result.Ok)
+            {
+                return Result.Ok;
+            }
+            return Result.NotOk;
+        }
+        public bool IsCommandValid(Command command)
+        {
+            if (command == null)
+            {
+                return false;
+            }
+            if (command.Aileron > 1.0 || command.Aileron < -1.0)
+            {
+                return false;
+            }
+            if (command.Rudder > 1.0 || command.Rudder < -1.0)
+            {
+                return false;
+            }
+            if (command.Elevator > 1.0 || command.Elevator < -1.0)
+            {
+                return false;
+            }
+            if (command.Throttle > 1.0 || command.Throttle < 0.0)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -14,5 +14,6 @@ namespace FlightMobileApp.Managers
         public Task<Result> Execute(Command command);
         public void Start();
         public void ProcessCommands();
+        public bool IsCommandValid(Command command);
     }
 }

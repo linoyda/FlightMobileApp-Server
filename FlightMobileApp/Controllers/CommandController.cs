@@ -21,25 +21,29 @@ namespace FlightMobileApp.Controllers
             commandManager = manager;
         }
 
-        // check type of return***************** need to return status**********
         // POST: /api/command
         [HttpPost]
-        public ActionResult PostCommand([FromBody] Command command)
+        public async Task<ActionResult> PostCommand([FromBody] Command command)
         {
-            // need to check if valid**********
+            bool isValid = commandManager.IsCommandValid(command);
+            if (!isValid)
+            {
+                return BadRequest();
+            }
+            //If the current command is valid, execute it and await its' result.
             try
             {
-                Task<Result> returned = commandManager.Execute(command);
-                if (returned.IsCompletedSuccessfully)
+                Result returned = await commandManager.Execute(command);
+                if (returned == Result.Ok)
                 {
                     return Ok();
                 }
+                return BadRequest();
             } catch (Exception)
             {
-
+                return Conflict(); //*******************
             }
             
-            return Ok();
         }
     }
 }
