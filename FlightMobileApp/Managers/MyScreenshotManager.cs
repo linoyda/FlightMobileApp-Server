@@ -22,21 +22,28 @@ namespace FlightMobileApp.Managers
 
         public async Task<Byte[]> GetScreenshot()
         {
+            MemoryStream streamMemory = new MemoryStream();
             // create http request
             string urlStr = "get" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
             string URL = string.Format(urlStr);
+            // initialize an HttpWebRequest for the current URL
             WebRequest request = WebRequest.Create(URL);
             request.Method = "GET";
             request.Timeout = 1000;
-
-            // check if try catch needed************
+                
             // get response from server
-            HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+            {
+                // get the data stream that is associated with the specified url
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    // read the bytes in responseStream and copy them to content
+                    await responseStream.CopyToAsync(streamMemory);
+                }
+            }
 
             // convert response to image (byte array)
-            MemoryStream stream = new MemoryStream();
-            response.GetResponseStream().CopyTo(stream);
-            Byte[] bytesArr = stream.ToArray();
+            Byte[] bytesArr = streamMemory.ToArray();
 
             return bytesArr;
         }
