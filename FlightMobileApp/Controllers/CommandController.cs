@@ -27,7 +27,7 @@ namespace FlightMobileApp.Controllers
         public ActionResult PostCommand([FromBody] Command command)
         {
             // need to check if valid**********
-
+            commandManager.Execute(command);
             return Ok();
         }
     }

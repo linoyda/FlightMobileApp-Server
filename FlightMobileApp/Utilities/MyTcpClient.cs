@@ -55,11 +55,11 @@ namespace FlightMobileApp.Utilities
 
         public string Read()
         {
-            byte[] bytesArray = new byte[100];
+            byte[] bytesArray = new byte[1024];
             string strRead;
             try
             {
-                networkStream.Read(bytesArray, 0, 100);
+                int nRead = networkStream.Read(bytesArray, 0, 1024);
                 strRead = Encoding.ASCII.GetString(bytesArray, 0, bytesArray.Length);
             }
             catch (IOException)

@@ -8,6 +8,11 @@ namespace FlightMobileApp.Managers
 {
     public interface ICommandManager
     {
-        public void PostCommand(Command command);
+        public void Connect();
+        public void Disconnect();
+        public Result SendContentToSimulator(string fullPath, double newValueToSend);
+        public Task<Result> Execute(Command command);
+        public void Start();
+        public void ProcessCommands();
     }
 }
