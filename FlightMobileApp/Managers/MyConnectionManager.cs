@@ -12,8 +12,8 @@ namespace FlightMobileApp.Managers
     {
         private readonly ITcpClient client = new MyTcpClient();
         private bool isClientAlreadyConnected = false;
-        private string ip;
-        private string portStr;
+        private readonly string ip;
+        private readonly string portStr;
         private readonly Mutex mutex = new Mutex();
         public MyConnectionManager(IConfiguration configuration)
         {
