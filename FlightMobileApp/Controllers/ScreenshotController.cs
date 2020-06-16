@@ -20,13 +20,12 @@ namespace FlightMobileApp.Controllers
             this.screenshotManager = screenshot;
         }
 
-        // check type of return***************** need to return picture?**********
         // GET: api/Screenshot
         [HttpGet]
-        public void GetScreenshot()
+        public async Task<IActionResult> GetScreenshot()
         {
-            // need to check if valid**********
-
+            Byte[] bytesArr = await screenshotManager.GetScreenshot();
+            return File(bytesArr, "screenshot/jpg");
         }
     }
 }
