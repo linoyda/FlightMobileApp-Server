@@ -16,9 +16,9 @@ namespace FlightMobileApp.Controllers
         private readonly ICommandManager commandManager;
 
         // Constructor
-        public CommandController(ICommandManager command)
+        public CommandController(ICommandManager manager)
         {
-            this.commandManager = command;
+            commandManager = manager;
         }
 
         // check type of return***************** need to return status**********
@@ -27,7 +27,18 @@ namespace FlightMobileApp.Controllers
         public ActionResult PostCommand([FromBody] Command command)
         {
             // need to check if valid**********
-            commandManager.Execute(command);
+            try
+            {
+                Task<Result> returned = commandManager.Execute(command);
+                if (returned.IsCompletedSuccessfully)
+                {
+                    return Ok();
+                }
+            } catch (Exception)
+            {
+
+            }
+            
             return Ok();
         }
     }

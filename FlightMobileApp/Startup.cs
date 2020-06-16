@@ -26,8 +26,8 @@ namespace FlightMobileApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            ICommandManager connectionManager = new MyCommandManager(Configuration);
-            services.AddSingleton(connectionManager);
+            ICommandManager commandManager = new MyCommandManager(Configuration);
+            services.AddSingleton(commandManager);
             services.AddSingleton<ICommandManager, MyCommandManager>();
             services.AddSingleton<IScreenshotManager, MyScreenshotManager>();
         }
