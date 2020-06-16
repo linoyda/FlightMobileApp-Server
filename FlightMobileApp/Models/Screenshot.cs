@@ -8,6 +8,6 @@ namespace FlightMobileApp.Models
     public class Screenshot
     {
         public string Ip { get; set; }
-        public int Port { get; set; }
+        public string Port { get; set; }
     }
 }
