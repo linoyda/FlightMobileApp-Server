@@ -11,7 +11,7 @@ namespace FlightMobileApp.Managers
 {
     public class MyScreenshotManager : IScreenshotManager
     {
-        private readonly Screenshot screenshot;
+        private readonly Screenshot screenshot = new Screenshot();
 
         // Constructor
         public MyScreenshotManager(IConfiguration configuration)
