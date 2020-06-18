@@ -8,7 +8,7 @@ using FlightMobileApp.Managers;
 
 namespace FlightMobileApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ScreenshotController : ControllerBase
     {
