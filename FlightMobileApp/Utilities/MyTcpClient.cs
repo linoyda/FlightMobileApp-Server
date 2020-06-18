@@ -16,7 +16,7 @@ namespace FlightMobileApp.Utilities
         public void Connect(string ip, int port)
         {
             int timeoutMs = 10000;
-            const string firstWriting = "data\n";
+            const string sendingData = "data\n";
 
             // Initialize the networkStream and set a timeout of 10 seconds. If the time expires
             // before read / write successfully completes, TcpClient throws IOException.
@@ -28,10 +28,10 @@ namespace FlightMobileApp.Utilities
                 client.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 // Set the network stream accordingly
                 NetworkStream networkStream = client.GetStream();
-                ASCIIEncoding encoding = new ASCIIEncoding();
-                byte[] byteArray = new byte[1025];
-                byteArray = encoding.GetBytes(firstWriting);
-                networkStream.Write(byteArray, 0, byteArray.Length);
+                ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+                byte[] bytes = new byte[1025];
+                bytes = asciiEncoding.GetBytes(sendingData);
+                networkStream.Write(bytes, 0, bytes.Length);
                 
                 //Write(firstWriting);
             } catch (IOException)
@@ -61,12 +61,12 @@ namespace FlightMobileApp.Utilities
 
         public string Read()
         {
-            byte[] bytesArray = new byte[1024];
+            byte[] bytes = new byte[1024];
             try
             {
-                var nRead = client.GetStream().Read(bytesArray, 0, bytesArray.Length);
-                var strRead = Encoding.ASCII.GetString(bytesArray, 0, nRead);
-                return strRead;
+                var numRead = client.GetStream().Read(bytes, 0, bytes.Length);
+                var readString = Encoding.ASCII.GetString(bytes, 0, numRead);
+                return readString;
             }
             catch (IOException e1)
             {
@@ -92,10 +92,10 @@ namespace FlightMobileApp.Utilities
         {
             try
             {
-                ASCIIEncoding encoding = new ASCIIEncoding();
+                ASCIIEncoding asciiEncoding = new ASCIIEncoding();
                 NetworkStream networkStream = client.GetStream();
-                byte[] byteArray = encoding.GetBytes(command);
-                networkStream.Write(byteArray, 0, byteArray.Length);
+                byte[] bytes = asciiEncoding.GetBytes(command);
+                networkStream.Write(bytes, 0, bytes.Length);
                 networkStream.Flush();
             } catch (IOException e)
             {
