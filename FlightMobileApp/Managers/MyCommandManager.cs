@@ -46,14 +46,13 @@ namespace FlightMobileApp.Managers
         }
         public Result SendContentToSimulator(string fullPath, double newValueToSend)
         {
-            string setStr = "set " + fullPath + newValueToSend.ToString() + " \n";
-            string getStr = "get " + fullPath + " \n";
-            string returnedData, tempData;
+            string setStr = "set " + fullPath + newValueToSend.ToString() + "\n";
+            string getStr = "get " + fullPath + "\n";
+            string returnedData;
             try
             {
                 mutex.WaitOne();
                 client.Write(setStr);
-                tempData = client.Read();
                 client.Write(getStr);
                 returnedData = client.Read();
                 mutex.ReleaseMutex();
@@ -92,22 +91,20 @@ namespace FlightMobileApp.Managers
                 try
                 {
                     throttleRes = SendContentToSimulator(
-                    "/controls/flight/throttle", asyncCmd.Command.Throttle);
+                    "/controls/flight/throttle ", asyncCmd.Command.Throttle);
                     elevatorRes = SendContentToSimulator(
-                        "/controls/flight/elevator", asyncCmd.Command.Elevator);
+                        "/controls/flight/elevator ", asyncCmd.Command.Elevator);
                     rudderRes = SendContentToSimulator(
-                        "/controls/flight/rudder", asyncCmd.Command.Rudder);
+                        "/controls/flight/rudder ", asyncCmd.Command.Rudder);
                     aileronRes = SendContentToSimulator(
-                        "/controls/flight/aileron", asyncCmd.Command.Aileron);
+                        "/controls/flight/aileron ", asyncCmd.Command.Aileron);
                     //Only if ALL of the results are OK - totalRes is OK.
                     totalRes = GetTotalResult(throttleRes, elevatorRes, rudderRes, aileronRes);
+                    asyncCmd.Completion.SetResult(totalRes);
                 } catch (Exception exception)
                 {
                     asyncCmd.Completion.SetException(exception);
-                } finally
-                {
-                    asyncCmd.Completion.SetResult(totalRes);
-                }  
+                } 
             }
         }
         public Result GetTotalResult(

@@ -39,8 +39,9 @@ namespace FlightMobileApp.Controllers
                     return Ok();
                 }
                 return BadRequest();
-            } catch (Exception)
+            } catch (Exception e)
             {
+                Console.WriteLine("controller");
                 return Conflict(); //*******************
             }
             

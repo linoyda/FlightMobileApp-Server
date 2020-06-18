@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +12,10 @@ namespace FlightMobileApp.Utilities
     public class MyTcpClient : ITcpClient
     {
         private TcpClient client = new TcpClient();
-        private NetworkStream networkStream;
+        //private NetworkStream networkStream;
         public void Connect(string ip, int port)
         {
-            int timeoutMs = 100;
+            int timeoutMs = 10000;
             const string firstWriting = "data\n";
 
             // Initialize the networkStream and set a timeout of 10 seconds. If the time expires
@@ -24,10 +25,15 @@ namespace FlightMobileApp.Utilities
 
             try
             {
-                client.Connect(ip, port);
+                client.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 // Set the network stream accordingly
-                networkStream = client.GetStream();
-                Write(firstWriting);
+                NetworkStream networkStream = client.GetStream();
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                byte[] byteArray = new byte[1025];
+                byteArray = encoding.GetBytes(firstWriting);
+                networkStream.Write(byteArray, 0, byteArray.Length);
+                
+                //Write(firstWriting);
             } catch (IOException)
             {
                 //Create a new type of exception / find out a proper one
@@ -45,7 +51,7 @@ namespace FlightMobileApp.Utilities
         {
             try
             {
-                networkStream.Close();
+                //networkStream.Close();
                 client.Close();
             } catch (Exception)
             {
@@ -56,14 +62,20 @@ namespace FlightMobileApp.Utilities
         public string Read()
         {
             byte[] bytesArray = new byte[1024];
-            string strRead;
             try
             {
-                int nRead = networkStream.Read(bytesArray, 0, 1024);
-                strRead = Encoding.ASCII.GetString(bytesArray, 0, bytesArray.Length);
+                var nRead = client.GetStream().Read(bytesArray, 0, bytesArray.Length);
+                var strRead = Encoding.ASCII.GetString(bytesArray, 0, nRead);
+                return strRead;
             }
-            catch (IOException)
+            catch (IOException e1)
             {
+                Console.WriteLine("IOException INNER:" + e1.InnerException + "\n\n");
+
+                if (e1.InnerException is SocketException)
+                {
+                    Console.WriteLine(((SocketException)(e1.InnerException)).ErrorCode);
+                }
                 return null;
             }
             catch (TimeoutException)
@@ -74,7 +86,6 @@ namespace FlightMobileApp.Utilities
             {
                 return null;
             }
-            return strRead;
         }
 
         public void Write(string command)
@@ -82,17 +93,19 @@ namespace FlightMobileApp.Utilities
             try
             {
                 ASCIIEncoding encoding = new ASCIIEncoding();
+                NetworkStream networkStream = client.GetStream();
                 byte[] byteArray = encoding.GetBytes(command);
                 networkStream.Write(byteArray, 0, byteArray.Length);
-            } catch (IOException)
+                networkStream.Flush();
+            } catch (IOException e)
             {
-
-            } catch (TimeoutException)
+                Console.WriteLine("IOException" + e.Message);
+            } catch (TimeoutException e2)
             {
-
-            } catch (Exception)
+                Console.WriteLine("TimeoutException" + e2.Message);
+            } catch (Exception e3)
             {
-
+                Console.WriteLine("GENERAL" + e3.Message);
             }
         }
     }
