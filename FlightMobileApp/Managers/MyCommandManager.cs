@@ -91,7 +91,7 @@ namespace FlightMobileApp.Managers
                 try
                 {
                     throttleRes = SendContentToSimulator(
-                    "/controls/flight/throttle ", asyncCmd.Command.Throttle);
+                    "/controls/engines/current-engine/throttle ", asyncCmd.Command.Throttle);
                     elevatorRes = SendContentToSimulator(
                         "/controls/flight/elevator ", asyncCmd.Command.Elevator);
                     rudderRes = SendContentToSimulator(
