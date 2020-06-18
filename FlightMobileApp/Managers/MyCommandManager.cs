@@ -48,11 +48,12 @@ namespace FlightMobileApp.Managers
         {
             string setStr = "set " + fullPath + newValueToSend.ToString() + " \n";
             string getStr = "get " + fullPath + " \n";
-            string returnedData;
+            string returnedData, tempData;
             try
             {
                 mutex.WaitOne();
                 client.Write(setStr);
+                tempData = client.Read();
                 client.Write(getStr);
                 returnedData = client.Read();
                 mutex.ReleaseMutex();
