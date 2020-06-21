@@ -6,6 +6,7 @@ using FlightMobileApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FlightMobileApp.Managers;
+using System.IO;
 
 namespace FlightMobileApp.Controllers
 {
@@ -26,6 +27,7 @@ namespace FlightMobileApp.Controllers
         public async Task<ActionResult> PostCommand([FromBody] Command command)
         {
             bool isValid = commandManager.IsCommandValid(command);
+            int requestTimeout = 408, internalError = 500 , failedDependencey = 424;
             if (!isValid)
             {
                 return BadRequest();
@@ -39,12 +41,16 @@ namespace FlightMobileApp.Controllers
                     return Ok();
                 }
                 return BadRequest();
-            } catch (Exception e)
+            } catch (IOException)
             {
-                Console.WriteLine("controller");
-                return Conflict(); //*******************
+                return StatusCode(failedDependencey, "Failed to Retrieve Data. Try Again Later");
+            } catch (TimeoutException)
+            {
+                return StatusCode(requestTimeout, "Timeout Occurred. Try Again Later");
+            } catch (Exception)
+            {
+                return StatusCode(internalError, "Failed to Handle the Request. Try Again Later");
             }
-            
         }
     }
 }

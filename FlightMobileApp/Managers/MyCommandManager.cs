@@ -49,20 +49,18 @@ namespace FlightMobileApp.Managers
             string setStr = "set " + fullPath + newValueToSend.ToString() + "\n";
             string getStr = "get " + fullPath + "\n";
             string returnedData;
-            try
-            {
-                mutex.WaitOne();
-                client.Write(setStr);
-                client.Write(getStr);
-                returnedData = client.Read();
-                mutex.ReleaseMutex();
-            }
-            catch (Exception) // Exception here = failed to get / set.
-            {
-                throw new Exception("Failed Reading or Writing to sim");
-            }
+            mutex.WaitOne();
+            client.Write(setStr);
+            client.Write(getStr);
+            returnedData = client.Read();
+            mutex.ReleaseMutex();
 
-            //Remove \n from the returnedData
+            //Failed to get info from server
+            if (returnedData == null)
+            {
+                return Result.NotOk;
+            }
+            //Else, remove \n from the returnedData and convert it to double.
             returnedData = returnedData.Replace("\n", string.Empty);
             double valueGot = double.Parse(returnedData);
             if (newValueToSend == valueGot) 
@@ -84,7 +82,7 @@ namespace FlightMobileApp.Managers
         }
         public void ProcessCommands()
         {
-            Result throttleRes, aileronRes, elevatorRes, rudderRes, totalRes = Result.NotOk;
+            Result throttleRes, aileronRes, elevatorRes, rudderRes;
             Connect();
             foreach (AsyncCommand asyncCmd in queue.GetConsumingEnumerable())
             {
@@ -99,7 +97,8 @@ namespace FlightMobileApp.Managers
                     aileronRes = SendContentToSimulator(
                         "/controls/flight/aileron ", asyncCmd.Command.Aileron);
                     //Only if ALL of the results are OK - totalRes is OK.
-                    totalRes = GetTotalResult(throttleRes, elevatorRes, rudderRes, aileronRes);
+                    Result totalRes = GetTotalResult(
+                        throttleRes, elevatorRes, rudderRes, aileronRes);
                     asyncCmd.Completion.SetResult(totalRes);
                 } catch (Exception exception)
                 {
@@ -117,25 +116,29 @@ namespace FlightMobileApp.Managers
             }
             return Result.NotOk;
         }
+        
+        //This method returns true only if the given command
+        //isn't null and its' fields match the requirements.
         public bool IsCommandValid(Command command)
         {
+            double maxVal = 1.0, minValMost = -1.0, minValThrottle = 0.0;
             if (command == null)
             {
                 return false;
             }
-            if (command.Aileron > 1.0 || command.Aileron < -1.0)
+            if (command.Aileron > maxVal || command.Aileron < minValMost)
             {
                 return false;
             }
-            if (command.Rudder > 1.0 || command.Rudder < -1.0)
+            if (command.Rudder > maxVal || command.Rudder < minValMost)
             {
                 return false;
             }
-            if (command.Elevator > 1.0 || command.Elevator < -1.0)
+            if (command.Elevator > maxVal || command.Elevator < minValMost)
             {
                 return false;
             }
-            if (command.Throttle > 1.0 || command.Throttle < 0.0)
+            if (command.Throttle > maxVal || command.Throttle < minValThrottle)
             {
                 return false;
             }

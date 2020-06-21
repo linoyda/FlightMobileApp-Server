@@ -23,7 +23,15 @@ namespace FlightMobileApp.Utilities
             client.SendTimeout = timeoutMs;
             client.ReceiveTimeout = timeoutMs;
 
-            try
+            client.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
+            // Set the network stream accordingly
+            NetworkStream networkStream = client.GetStream();
+            ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+            byte[] bytes = new byte[1025];
+            bytes = asciiEncoding.GetBytes(sendingData);
+            networkStream.Write(bytes, 0, bytes.Length);
+
+            /*try
             {
                 client.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 // Set the network stream accordingly
@@ -44,25 +52,29 @@ namespace FlightMobileApp.Utilities
                 //Create a new type of exception / find out a proper one
                 // and throw it here. meanwhile -
                 throw new Exception();
-            }
+            }*/
         }
 
         public void Disconnect()
         {
-            try
+            client.Close();
+            /*try
             {
                 //networkStream.Close();
-                client.Close();
+                
             } catch (Exception)
             {
                 //handle ex.
-            }
+            }*/
         }
 
         public string Read()
         {
             byte[] bytes = new byte[1024];
-            try
+            var numRead = client.GetStream().Read(bytes, 0, bytes.Length);
+            var readString = Encoding.ASCII.GetString(bytes, 0, numRead);
+            return readString;
+            /*try
             {
                 var numRead = client.GetStream().Read(bytes, 0, bytes.Length);
                 var readString = Encoding.ASCII.GetString(bytes, 0, numRead);
@@ -70,8 +82,6 @@ namespace FlightMobileApp.Utilities
             }
             catch (IOException e1)
             {
-                Console.WriteLine("IOException INNER:" + e1.InnerException + "\n\n");
-
                 if (e1.InnerException is SocketException)
                 {
                     Console.WriteLine(((SocketException)(e1.InnerException)).ErrorCode);
@@ -85,18 +95,19 @@ namespace FlightMobileApp.Utilities
             catch (Exception)
             {
                 return null;
-            }
+            }*/
         }
 
         public void Write(string command)
         {
-            try
+            ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+            NetworkStream networkStream = client.GetStream();
+            byte[] bytes = asciiEncoding.GetBytes(command);
+            networkStream.Write(bytes, 0, bytes.Length);
+            networkStream.Flush();
+            /*try
             {
-                ASCIIEncoding asciiEncoding = new ASCIIEncoding();
-                NetworkStream networkStream = client.GetStream();
-                byte[] bytes = asciiEncoding.GetBytes(command);
-                networkStream.Write(bytes, 0, bytes.Length);
-                networkStream.Flush();
+                
             } catch (IOException e)
             {
                 Console.WriteLine("IOException" + e.Message);
@@ -106,7 +117,7 @@ namespace FlightMobileApp.Utilities
             } catch (Exception e3)
             {
                 Console.WriteLine("GENERAL" + e3.Message);
-            }
+            }*/
         }
     }
 }
