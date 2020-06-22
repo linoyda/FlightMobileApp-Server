@@ -24,8 +24,9 @@ namespace FlightMobileApp.Managers
         {
             MemoryStream streamMemory = new MemoryStream();
             // create http request
-            string urlStr = "get " + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
+            string urlStr = "http://" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
             string URL = string.Format(urlStr);
+
             // initialize an HttpWebRequest for the current URL
             WebRequest request = WebRequest.Create(URL);
             request.Method = "GET";

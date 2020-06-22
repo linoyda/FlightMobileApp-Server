@@ -42,6 +42,22 @@ namespace FlightMobileApp
 
             app.UseRouting();
 
+            /*app.UseHttpsRedirection();
+
+            app.Use(async (context, next) =>
+            {
+                var url = context.Request.Path.Value;
+
+                //Redirect to an external URL 
+                if (url.Contains("/screenshot"))
+                {
+                    int httpPort = Configuration.GetValue<int>("SimulatorInfo:HttpPort");
+                    context.Response.Redirect("http://10.0.2.2:" + httpPort + "/screenshot");
+                    return;
+                }
+                await next();
+            });*/
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
