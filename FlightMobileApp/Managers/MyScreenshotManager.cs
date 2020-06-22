@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Diagnostics;
 
 namespace FlightMobileApp.Managers
 {
@@ -20,33 +22,38 @@ namespace FlightMobileApp.Managers
             screenshot.Port = configuration.GetConnectionString("httpPort");
         }
 
-        public async Task<Byte[]> GetScreenshot()
+        public async Task<System.IO.Stream> GetScreenshot()
         {
-            MemoryStream streamMemory = new MemoryStream();
-            // create http request
-            string urlStr = "http://" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
-            string URL = string.Format(urlStr);
 
-            // initialize an HttpWebRequest for the current URL
-            WebRequest request = WebRequest.Create(URL);
-            request.Method = "GET";
-            request.Timeout = 1000;
-                
-            // get response from server
-            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+            HttpClient client = new HttpClient();
+            try
             {
-                // get the data stream that is associated with the specified url
-                using (Stream responseStream = response.GetResponseStream())
+                // create http request
+                string urlStr = "http://" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
+
+                // get response from server
+                HttpResponseMessage response = await client.GetAsync(urlStr);
+                response.EnsureSuccessStatusCode();
+
+                // read the bytes in responseStream and copy them to content
+                System.IO.Stream strean = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode)
                 {
-                    // read the bytes in responseStream and copy them to content
-                    await responseStream.CopyToAsync(streamMemory);
+                    return strean;
+                }
+                else
+                {
+                    //*************************????
+                    Debug.WriteLine("Error getting flight");
+                    return null;
                 }
             }
-
-            // convert response to image (byte array)
-            Byte[] bytesArr = streamMemory.ToArray();
-
-            return bytesArr;
+            catch (HttpRequestException)
+            {
+                //linoy***************caparalik
+            }
+            client.Dispose();
+            return null;
         }
     }
 }

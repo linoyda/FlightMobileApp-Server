@@ -23,10 +23,17 @@ namespace FlightMobileApp.Controllers
 
         // GET: api/Screenshot
         [HttpGet]
-        public async Task<IActionResult> GetScreenshot()
+        public async Task<System.IO.Stream> GetScreenshot()
         {
-            Byte[] bytesArr = await screenshotManager.GetScreenshot();
-            return File(bytesArr, "image/jpg");
+            try
+            {
+                System.IO.Stream streamBody = await screenshotManager.GetScreenshot();
+                return streamBody;
+            } catch (HttpRequestException)
+            {
+                // linoy*****************caparalik
+            }
+            return null;
         }
     }
 }

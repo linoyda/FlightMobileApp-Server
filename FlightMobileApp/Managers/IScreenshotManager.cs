@@ -7,6 +7,6 @@ namespace FlightMobileApp.Managers
 {
     public interface IScreenshotManager
     {
-        public Task<Byte[]> GetScreenshot();
+        public Task<System.IO.Stream> GetScreenshot();
     }
 }
