@@ -25,18 +25,8 @@ namespace FlightMobileApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetScreenshot()
         {
-            // Byte[] bytesArr = await screenshotManager.GetScreenshot();
-            //return File(bytesArr, "image/jpg");
-            var client = new HttpClient
-            {
-                // Set timeout.
-                Timeout = TimeSpan.FromSeconds(8000)
-            };
-            string request = "http://127.0.0.1:57210/screenshot";
-            var response = await client.GetAsync(request);
-            var img = await response.Content.ReadAsStreamAsync();
-            var screenshot = File(img, "img/jpg");
-            return screenshot;
+            Byte[] bytesArr = await screenshotManager.GetScreenshot();
+            return File(bytesArr, "image/jpg");
         }
     }
 }
