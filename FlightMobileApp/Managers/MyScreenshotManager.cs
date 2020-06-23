@@ -15,7 +15,7 @@ namespace FlightMobileApp.Managers
     {
         private readonly Screenshot screenshot = new Screenshot();
 
-        // Constructor
+        //Constructor. Given a configuration, get the ConnectionStrings (IP/ port).
         public MyScreenshotManager(IConfiguration configuration)
         {
             screenshot.Ip = configuration.GetConnectionString("ip");
@@ -24,33 +24,20 @@ namespace FlightMobileApp.Managers
 
         public async Task<System.IO.Stream> GetScreenshot()
         {
-
             HttpClient client = new HttpClient();
-            try
-            {
-                // create http request
-                string urlStr = "http://" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
+            // create http request string.
+            string urlStr = "http://" + screenshot.Ip + ":" + screenshot.Port + "/screenshot";
 
-                // get response from server
-                HttpResponseMessage response = await client.GetAsync(urlStr);
-                response.EnsureSuccessStatusCode();
+            // get response from server
+            HttpResponseMessage response = await client.GetAsync(urlStr);
+            response.EnsureSuccessStatusCode();
 
-                // read the bytes in responseStream and copy them to content
-                System.IO.Stream strean = await response.Content.ReadAsStreamAsync();
-                if (response.IsSuccessStatusCode)
-                {
-                    return strean;
-                }
-                else
-                {
-                    //*************************????
-                    Debug.WriteLine("Error getting flight");
-                    return null;
-                }
-            }
-            catch (HttpRequestException)
+            // read the bytes in responseStream and copy them to content
+            System.IO.Stream stream = await response.Content.ReadAsStreamAsync();
+            if (response.IsSuccessStatusCode)
             {
-                //linoy***************caparalik
+                client.Dispose();
+                return stream;
             }
             client.Dispose();
             return null;

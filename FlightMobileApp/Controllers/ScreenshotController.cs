@@ -21,7 +21,7 @@ namespace FlightMobileApp.Controllers
             screenshotManager = manager;
         }
 
-        // GET: api/Screenshot
+        // GET: /screenshot
         [HttpGet]
         public async Task<System.IO.Stream> GetScreenshot()
         {
@@ -29,11 +29,10 @@ namespace FlightMobileApp.Controllers
             {
                 System.IO.Stream streamBody = await screenshotManager.GetScreenshot();
                 return streamBody;
-            } catch (HttpRequestException)
+            } catch (Exception)
             {
-                // linoy*****************caparalik
+                return null;
             }
-            return null;
         }
     }
 }
