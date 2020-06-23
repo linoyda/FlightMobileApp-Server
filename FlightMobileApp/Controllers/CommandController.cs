@@ -43,13 +43,13 @@ namespace FlightMobileApp.Controllers
                 return BadRequest();
             } catch (IOException)
             {
-                return StatusCode(failedDependencey, "Failed to Retrieve Data. Try Again Later");
+                return StatusCode(failedDependencey, "Failed to Retrieve Data. Try Again");
             } catch (TimeoutException)
             {
-                return StatusCode(requestTimeout, "Timeout Occurred. Try Again Later");
+                return StatusCode(requestTimeout, "Timeout Occurred. Try Again");
             } catch (Exception)
             {
-                return StatusCode(internalError, "Failed to Handle the Request. Try Again Later");
+                return StatusCode(internalError, "Failed to Handle the Request. Try Again");
             }
         }
     }
